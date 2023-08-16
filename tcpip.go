@@ -111,6 +111,9 @@ func (h *ForwardedTCPHandler) HandleSSHRequest(ctx Context, srv *Server, req *go
 		if srv.ReversePortForwardingCallback == nil || !srv.ReversePortForwardingCallback(ctx, reqPayload.BindAddr, reqPayload.BindPort) {
 			return false, []byte("port forwarding is disabled")
 		}
+		if reqPayload.BindAddr == "" {
+			reqPayload.BindAddr = "0.0.0.0"
+		}
 		addr := net.JoinHostPort(reqPayload.BindAddr, strconv.Itoa(int(reqPayload.BindPort)))
 		ln, err := net.Listen("tcp", addr)
 		if err != nil {
